@@ -1,6 +1,6 @@
 {
-  "name": "Scriptr",
-  "version": "0.0.1",
+  "name": "Scriptrjs",
+  "version": "0.1.0",
   "keywords": [
     "loader",
     "require",
