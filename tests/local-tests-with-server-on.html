@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QUnit Test Suite</title>
+<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.14.0.css">
+<script src="http://code.jquery.com/qunit/qunit-1.14.0.js"></script>
+
+</head>
+<body>
+<h1 id="qunit-header">scriptLoader Test Suite</h1>
+<h2 id="qunit-banner"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<script type="text/javascript" src="../scriptr.js"></script>
+<script>
+    require.Path('http://localhost:9001/WithServerTests/Normal/');
+</script>
+<script type="text/javascript" src="local-tests.js"></script>
+</body>
+</html>

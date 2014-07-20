@@ -1,0 +1,27 @@
+{
+    "name": "scriptr",
+    "main": "scriptr.js",
+    "version": "0.0.1",
+    "description": "Simple AMD Module Loader",
+    "moduleType": [
+        "AMD"
+    ],
+    "keywords": [
+        "require",
+        "AMD",
+        "define",
+        "load",
+        "async"
+    ],
+    "authors": [
+        "Mamod A. Mehyar"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ]
+}
