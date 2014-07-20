@@ -22,7 +22,7 @@ module.exports = function(grunt) {
             library: ['scriptr.js'],
             options: {
                 browser  : true,
-                predef   : ['define', 'module', 'ActiveXObject', 'console', 'log'],
+                predef   : ['require','define', 'module', 'console', 'log'],
                 boss     : true,
                 curly    : true,
                 eqnull   : true,
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
         uglify: {
             library: {
                 files: {
-                    '<%= bower.name %>-<%= bower.version %>.min.js': ['scriptr.js']
+                    'scriptr-<%= bower.version %>.min.js': ['scriptr.js']
                 }
             }
         }
@@ -50,5 +50,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     // Define tasks
-    grunt.registerTask('default', ['Server', 'jshint', 'clean', 'uglify', 'qunit']);
+    grunt.registerTask('test', ['Server', 'jshint', 'qunit']);
+    grunt.registerTask('minify', ['jshint', 'clean', 'uglify']);
+    
 };
