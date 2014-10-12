@@ -48,9 +48,10 @@ QUnit.asyncTest( "Nested Loading Again!", function( assert ) {
 });
 
 QUnit.asyncTest( "Load External Library!", function( assert ) {
-    expect( 1 );
-    require('http://cdnjs.cloudflare.com/ajax/libs/URI.js/1.11.2/URI.min.js',function(URI){
-        assert.ok(typeof URI === 'function', 'URI Loaded');
+    expect( 2 );
+    require('http://cdnjs.cloudflare.com/ajax/libs/Colors.js/1.2.4/colors.min.js',function(Colors){
+        assert.ok(typeof Colors === 'object', 'Colors Loaded');
+        assert.ok(typeof Colors.hex2hsv === 'function')
         QUnit.start();
     });
 });
@@ -137,9 +138,7 @@ QUnit.asyncTest( "Require Dependencies Again", function( assert ) {
             QUnit.start();
         });
     },10);
-    
 });
-
 
 QUnit.asyncTest( "Predefined Native Modules", function( assert ) {
     require.Register({

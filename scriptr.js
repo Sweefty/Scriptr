@@ -90,7 +90,15 @@
     };
     
     Module.prototype.load = function (filename) {
-        if (!_window) { _window = Object.getOwnPropertyNames(window); }
+        if (!_window) {
+            _window = {};
+            for (var prop in window) {
+                if( window.hasOwnProperty( prop ) ) {
+                    _window[prop] = 1;
+                }
+            }
+        }
+
         var $this = this;
         debug('load ' + JSON.stringify(filename) +
               ' for module ' + JSON.stringify(this.id));
@@ -114,16 +122,17 @@
 
             var _run = function () {
                 var _fireNestedCb = function () {
-                    var _window2 = Object.getOwnPropertyNames(window);
-                    _window2.forEach(function(val) {
-                        if (_window.indexOf(val) == -1){
-                            try {
-                                var ex = window[val];
-                                delete window[val];
-                                $this.exports = ex;
-                            } catch (e){}
+                    for (var prop in window) {
+                        if( window.hasOwnProperty( prop ) ) {
+                            if (!_window[prop]){
+                                try {
+                                    var ex = window[prop];
+                                    delete window[prop];
+                                    $this.exports = ex;
+                                } catch (e){}
+                            }
                         }
-                    });
+                    }
 
                     if ($this.children.length) {
                         var childs = $this.children;
