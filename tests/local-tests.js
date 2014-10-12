@@ -49,7 +49,7 @@ QUnit.asyncTest( "Nested Loading Again!", function( assert ) {
 
 QUnit.asyncTest( "Load External Library!", function( assert ) {
     expect( 1 );
-    require('http://cdnjs.cloudflare.com/ajax/libs/URI.js/1.11.2/URI.min.js',function(test){
+    require('http://cdnjs.cloudflare.com/ajax/libs/URI.js/1.11.2/URI.min.js',function(URI){
         assert.ok(typeof URI === 'function', 'URI Loaded');
         QUnit.start();
     });
@@ -153,7 +153,7 @@ QUnit.asyncTest( "Predefined Native Modules", function( assert ) {
     require([
         'a',
         'knockout'
-    ],function(a){
+    ],function(a, ko){
         assert.ok(typeof ko === 'object');
         QUnit.start();
     });

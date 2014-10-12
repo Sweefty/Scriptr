@@ -1,5 +1,7 @@
 (function () {
     "use strict";
+
+    var _window;
     var doc = window.document,
         head = doc.getElementsByTagName('head')[0],
         a = doc.createElement("a"); //for resolving urls
@@ -88,14 +90,14 @@
     };
     
     Module.prototype.load = function (filename) {
+        if (!_window) { _window = Object.getOwnPropertyNames(window); }
         var $this = this;
         debug('load ' + JSON.stringify(filename) +
               ' for module ' + JSON.stringify(this.id));
         
         if(this.loaded) { throw('should not be loaded yet!'); }
         this.filename = filename;
-        
-        
+
         var $require = function () {
             return $this.require.apply($this, arguments);
         };
@@ -109,8 +111,20 @@
             
             $this.loaded = true;
             el.onload = el.onreadystatechange = null;
+
             var _run = function () {
                 var _fireNestedCb = function () {
+                    var _window2 = Object.getOwnPropertyNames(window);
+                    _window2.forEach(function(val) {
+                        if (_window.indexOf(val) == -1){
+                            try {
+                                var ex = window[val];
+                                delete window[val];
+                                $this.exports = ex;
+                            } catch (e){}
+                        }
+                    });
+
                     if ($this.children.length) {
                         var childs = $this.children;
                         var allcalled = true;
@@ -204,10 +218,9 @@
                     if (parent && parent.parent &&
                          parent.parent.id === cachedModule.id) {
                         
-                        if (console && console.error) {
-                            debug("WARNING: Circular Dependency Detected at " +
-                                   cachedModule.id + ' from ' + parent.id);
-                        }
+                        debug("WARNING: Circular Dependency Detected at " +
+                                cachedModule.id + ' from ' + parent.id);
+
                         cb(cachedModule.exports);
                     } else {
                         cachedModule.cb.push(cb);
@@ -244,5 +257,4 @@
     };
     
     window.require = require;
-    
 }());
