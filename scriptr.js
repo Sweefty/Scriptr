@@ -99,7 +99,7 @@
             }
         }
 
-        var $this = this;
+        var self = this;
         debug('load ' + JSON.stringify(filename) +
               ' for module ' + JSON.stringify(this.id));
         
@@ -107,17 +107,17 @@
         this.filename = filename;
 
         var $require = function () {
-            return $this.require.apply($this, arguments);
+            return self.require.apply(self, arguments);
         };
         
         var el = doc.createElement('script');
         el.onload = el.onerror = el.onreadystatechange = function () {
             if ((el.readyState && el.readyState !== "complete" &&
-                 el.readyState !== "loaded") || $this.loaded ){
+                 el.readyState !== "loaded") || self.loaded ){
                 return false;
             }
             
-            $this.loaded = true;
+            self.loaded = true;
             el.onload = el.onreadystatechange = null;
 
             var _run = function () {
@@ -128,14 +128,14 @@
                                 try {
                                     var ex = window[prop];
                                     delete window[prop];
-                                    $this.exports = ex;
+                                    self.exports = ex;
                                 } catch (e){}
                             }
                         }
                     }
 
-                    if ($this.children.length) {
-                        var childs = $this.children;
+                    if (self.children.length) {
+                        var childs = self.children;
                         var allcalled = true;
                         for (var i = 0; i < childs.length; i++){
                             if (!childs[i].fired) {
@@ -143,21 +143,21 @@
                                 break;
                             }
                         }
-                        if (!allcalled && !$this.callNow) {
+                        if (!allcalled && !self.callNow) {
                             setTimeout(function () {
                                 _fireNestedCb();
                             },25);
                             return;
                         }
                     }
-                    if (!$this.fired) {
-                        for (var x = 0; x < $this.cb.length; x++){
-                            var _cb = $this.cb[x];
+                    if (!self.fired) {
+                        for (var x = 0; x < self.cb.length; x++){
+                            var _cb = self.cb[x];
                             if (typeof _cb === 'function') {
-                                _cb($this.exports);
+                                _cb(self.exports);
                             }
                         }
-                        $this.fired = true;
+                        self.fired = true;
                     }
                 };
                 
@@ -172,17 +172,17 @@
                                 var mid = list.shift();
                                 var cb = list.length ? nested : function () {
                                     Array.prototype.push.apply( e, arguments );
-                                    var args = [$require, $this.exports].concat(e);
-                                    callback.apply($this, args);
+                                    var args = [$require, self.exports].concat(e);
+                                    callback.apply(self, args);
                                     _fireNestedCb();
                                 };
-                                Module._load(mid,cb,$this);
+                                Module._load(mid,cb,self);
                             }
                         };
                         nested();
                         return;
                     }
-                    callback.apply($this, [$require, $this.exports]);
+                    callback.apply(self, [$require, self.exports]);
                 }
                 _fireNestedCb();
             };
