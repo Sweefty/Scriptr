@@ -49,7 +49,10 @@ QUnit.asyncTest( "Nested Loading Again!", function( assert ) {
 
 QUnit.asyncTest( "Load External Library!", function( assert ) {
     expect( 2 );
-    require('http://cdnjs.cloudflare.com/ajax/libs/Colors.js/1.2.4/colors.min.js',function(Colors){
+    require({
+        file    : 'http://cdnjs.cloudflare.com/ajax/libs/Colors.js/1.2.4/colors.min.js',
+        imports : ['Colors'] 
+    }, function(Colors){
         assert.ok(typeof Colors === 'object', 'Colors Loaded');
         assert.ok(typeof Colors.hex2hsv === 'function')
         QUnit.start();
@@ -142,10 +145,13 @@ QUnit.asyncTest( "Require Dependencies Again", function( assert ) {
 
 QUnit.asyncTest( "Predefined Native Modules", function( assert ) {
     require.Register({
-        'a' : './tests/Modules/Native/a.js',
-        'b' : './tests/Modules/Native/b.js',
-        'c' : './tests/Modules/Native/c.js',
-        'knockout' : 'http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js'
+        'a'        : './tests/Modules/Native/a.js',
+        'b'        : './tests/Modules/Native/b.js',
+        'c'        : './tests/Modules/Native/c.js',
+        'knockout' : {
+            file   : 'http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js',
+            imports: ['ko']
+        }
     });
     
     expect( 7 );
@@ -153,7 +159,7 @@ QUnit.asyncTest( "Predefined Native Modules", function( assert ) {
         'a',
         'knockout'
     ],function(a, ko){
-        assert.ok(typeof ko === 'object');
+        assert.ok(typeof ko.observableArray === 'function');
         QUnit.start();
     });
 });

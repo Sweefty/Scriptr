@@ -22,7 +22,7 @@ module.exports = function(grunt) {
             library: ['scriptr.js'],
             options: {
                 browser  : true,
-                predef   : ['require','define', 'module', 'console', 'log'],
+                predef   : ['require', 'define', 'module', 'console'],
                 boss     : true,
                 curly    : true,
                 eqnull   : true,

@@ -1,7 +1,6 @@
 (function () {
     "use strict";
 
-    var _window;
     var doc = window.document,
         head = doc.getElementsByTagName('head')[0],
         a = doc.createElement("a"); //for resolving urls
@@ -54,9 +53,21 @@
     Module._cache = {};
     Module._Native = {};
     Module._resolveFilename = function (request, parent) {
-        var path = '';
+        var path   = '';
+        var _imports = [];
+
+        if (typeof request === 'object'){
+            _imports = request.imports || [];
+            request = request.file;
+        }
+
         if (Module._Native[request]) {
             request = Module._Native[request];
+            if (typeof request === 'object'){
+                _imports = request.imports;
+                request = request.file;
+            }
+
             if (!isURL(request)) { path = Clobal_Path; }
         } else if (isURL(request)) {
             //nothing to do
@@ -66,7 +77,10 @@
             path = Clobal_Path;
         }
         
-        return resolveUri(path + request);
+        return {
+            file    : resolveUri(path + request),
+            imports : _imports
+        };
     };
     
     var definedObjects = [];
@@ -76,7 +90,7 @@
         var cb = args.pop();
         var requireList = [];
         if (typeof cb !== 'function') {
-            throw("define must has a cb function as last argument");
+            throw new Error("define must has a cb function as last argument");
         }
         
         if (isArray(args[0])) {
@@ -84,20 +98,12 @@
         }
         
         definedObjects.push({
-            cb : cb,
+            cb   : cb,
             list : requireList
         });
     };
     
     Module.prototype.load = function (filename) {
-        if (!_window) {
-            _window = {};
-            for (var prop in window) {
-                if( window.hasOwnProperty( prop ) ) {
-                    _window[prop] = 1;
-                }
-            }
-        }
 
         var self = this;
         debug('load ' + JSON.stringify(filename) +
@@ -122,14 +128,18 @@
 
             var _run = function () {
                 var _fireNestedCb = function () {
-                    for (var prop in window) {
-                        if( window.hasOwnProperty( prop ) ) {
-                            if (!_window[prop]){
-                                try {
-                                    var ex = window[prop];
-                                    delete window[prop];
-                                    self.exports = ex;
-                                } catch (e){}
+                    var imports   = self.imports;
+                    var importLen = imports.length;
+                    if (importLen > 0){
+                        for (var i = 0; i < importLen; i++){
+                            var toImport = imports[i];
+                            if (window[toImport]){
+                                if (importLen == 1){
+                                    self.exports = window[toImport];
+                                } else {
+                                    self.exports[toImport] = window[toImport];
+                                }
+                                delete [window[toImport]];
                             }
                         }
                     }
@@ -137,8 +147,8 @@
                     if (self.children.length) {
                         var childs = self.children;
                         var allcalled = true;
-                        for (var i = 0; i < childs.length; i++){
-                            if (!childs[i].fired) {
+                        for (var y = 0; y < childs.length; y++){
+                            if (!childs[y].fired) {
                                 allcalled = false;
                                 break;
                             }
@@ -176,7 +186,7 @@
                                     callback.apply(self, args);
                                     _fireNestedCb();
                                 };
-                                Module._load(mid,cb,self);
+                                Module._load(mid, cb, self);
                             }
                         };
                         nested();
@@ -190,11 +200,13 @@
             return true;
         };
         el.async = true;
+        //el.src = filename + "?" + Date.now();
         el.src = filename;
         head.insertBefore(el, head.lastChild);
     };
     
     Module._load = function (request, cb, parent) {
+
         if (isArray(request)) {
             var e = [], nested = function () {
                 Array.prototype.push.apply( e, arguments );
@@ -204,7 +216,7 @@
                         Array.prototype.push.apply( e, arguments );
                         cb.apply({}, e);
                     };
-                    Module._load(id,callback,parent);
+                    Module._load(id, callback, parent);
                 }
             };
             nested();
@@ -216,7 +228,9 @@
                   ' parent: ' + parent.id);
         }
         
-        var filename = Module._resolveFilename(request, parent);
+        var obj = Module._resolveFilename(request, parent);
+        var filename = obj.file;
+        var imports  = obj.imports || [];
         var cachedModule = Module._cache[filename];
         if (cachedModule) {
             debug("Loading " + filename + " from cache");
@@ -240,6 +254,7 @@
         }
         
         var module = new Module(filename, cb, parent);
+        module.imports = imports;
         Module._cache[filename] = module;
         module.load(filename);
         return module.exports;
