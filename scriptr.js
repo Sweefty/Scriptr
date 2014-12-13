@@ -1,6 +1,6 @@
 (function () {
     "use strict";
-
+    
     var doc = window.document,
         head = doc.getElementsByTagName('head')[0],
         a = doc.createElement("a"); //for resolving urls
@@ -14,7 +14,7 @@
             path = script_tags[script_tags.length - 1].src;
         path = path.match(/(.*\/).*\.js/);
         return path[1];
-    })(), Clobal_Path = SELF_URL;
+    })(), Global_Path = SELF_URL;
     
     function isArray (obj) {
         return Object.prototype.toString.call(obj) === "[object Array]";
@@ -25,9 +25,17 @@
         return false;
     }
     
-    function resolveUri (uri) {
+    function resolveUri (uri, parent) {
+        var fullURI;
+
+        if (uri.indexOf('/') === 0){
+            fullURI = uri;
+        } else {
+            fullURI = parent + uri;
+        }
+
         var resolved;
-        a.href = uri;
+        a.href = fullURI;
         resolved = a.href;
         return resolved;
     }
@@ -68,17 +76,17 @@
                 request = request.file;
             }
 
-            if (!isURL(request)) { path = Clobal_Path; }
+            if (!isURL(request)) { path = Global_Path; }
         } else if (isURL(request)) {
             //nothing to do
         } else if (parent && parent.id) {
-            path = resolveUri(parent.id + '/../');
+            path = resolveUri('./../', parent.id);
         } else {
-            path = Clobal_Path;
+            path = Global_Path;
         }
-        
+
         return {
-            file    : resolveUri(path + request),
+            file    : resolveUri(request, path),
             imports : _imports
         };
     };
@@ -265,10 +273,10 @@
     };
     
     require.Path = function (path) {
-        var old = Clobal_Path;
+        var old = Global_Path;
         var self_path = isURL(path) ? '' : SELF_URL;
-        Clobal_Path = resolveUri(self_path + path);
-        debug("PATH: Change Global Path From " + old + " to " + Clobal_Path);
+        Global_Path = resolveUri(path, self_path);
+        debug("PATH: Change Global Path From " + old + " to " + Global_Path);
     };
     
     require.debug = false;

@@ -52,5 +52,4 @@ module.exports = function(grunt) {
     // Define tasks
     grunt.registerTask('test', ['Server', 'jshint', 'qunit']);
     grunt.registerTask('minify', ['jshint', 'clean', 'uglify']);
-    
 };
