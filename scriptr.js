@@ -208,13 +208,19 @@
             return true;
         };
         el.async = true;
-        //el.src = filename + "?" + Date.now();
-        el.src = filename;
+        if (require.noCache){
+            el.src = filename + "?" + Date.now();
+        } else {
+            el.src = filename;
+        }
+
         head.insertBefore(el, head.lastChild);
     };
     
     Module._load = function (request, cb, parent) {
 
+        if (!cb){ cb = function(){}; }
+        
         if (isArray(request)) {
             var e = [], nested = function () {
                 Array.prototype.push.apply( e, arguments );
@@ -279,6 +285,8 @@
         debug("PATH: Change Global Path From " + old + " to " + Global_Path);
     };
     
+    require.scriptr = true;
+    require.noCache = false;
     require.debug = false;
     require.Register = function (obj) {
         for (var property in obj){
