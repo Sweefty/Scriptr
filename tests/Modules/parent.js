@@ -1,6 +1,6 @@
-define(function(require,exports){
-    exports.file = 'parent.js';
-    require('./child.js', function(){
+define(function(){
+    this.exports.file = 'parent.js';
+    this.require('./child.js', function(){
         
     });
 });

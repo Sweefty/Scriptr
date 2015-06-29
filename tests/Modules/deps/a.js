@@ -1,3 +1,3 @@
-define(function(require,exports){
-    exports.file = 'deps/a.js';
+define(function(){
+    this.exports.file = 'deps/a.js';
 });

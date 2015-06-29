@@ -1,3 +1,3 @@
-define(function(require,exports){
-    exports.name = 'test1';
+define(function(){
+    this.exports.name = 'test1';
 });

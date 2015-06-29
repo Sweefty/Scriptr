@@ -1,9 +1,9 @@
-define(["./Company.js"], function(require,exports,Company) {
+define(["./Company.js"], function(Company) {
     
     function Employee(name) {
         this.name = name;
         this.company = new Company(name + "'s own company");
     };
     
-    exports.Employee = Employee;
+    this.exports.Employee = Employee;
 });

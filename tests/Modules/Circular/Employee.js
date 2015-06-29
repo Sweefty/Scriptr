@@ -1,4 +1,4 @@
-define(function(require, exports) {
+define("require", function(require) {
 
     var Company;
     require("./Company.js", function( C ){
@@ -10,5 +10,4 @@ define(function(require, exports) {
         this.name = name;
         this.company = new Company(name + "'s own company");
     };
-    
 });

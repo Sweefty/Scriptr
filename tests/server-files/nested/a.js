@@ -1,8 +1,9 @@
-define(function(require,exports){
+define(function(){
+    var exports = this.exports;
     
-    require('./b.js',function(b){
+    this.require('./b.js',function(b){
         exports.b = b;
     });
     
-    exports.name = 'a.js';
+    this.exports.name = 'a.js';
 });

@@ -1,4 +1,4 @@
-define(function(require,exports){
-    exports.file = 'a.js';
-    exports.number = 9;
+define(function(){
+    this.exports.file = 'a.js';
+    this.exports.number = 9;
 });

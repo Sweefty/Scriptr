@@ -1,4 +1,8 @@
-define(function(require, exports){
+define(function(){
+
+    var require = this.require;
+    var exports = this.exports;
+
     exports.name = 'c.js';
     
     require(['./a.js','./b.js'],function(a,b){

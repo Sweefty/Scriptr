@@ -1,4 +1,7 @@
-define(function(require,exports){
+define(function(){
+	var require = this.require;
+    var exports = this.exports;
+
     require("../a.js",function(a){
         exports.c = a.number;
     });

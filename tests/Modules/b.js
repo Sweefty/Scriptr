@@ -1,4 +1,4 @@
-define(function(require,exports){
+define(['exports', 'require'], function(exports, require){
     require('./sub/c.js',function(e){
         exports.b = e.c;
     });

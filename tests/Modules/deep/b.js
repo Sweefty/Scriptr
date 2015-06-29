@@ -5,7 +5,7 @@
 //    });
 //});
 
-define(['./a.js'],function(require,exports, a){
-    exports.name = 'b.js';
-    exports.a = a;
+define(['./a.js'],function(a){
+    this.exports.name = 'b.js';
+    this.exports.a = a;
 });

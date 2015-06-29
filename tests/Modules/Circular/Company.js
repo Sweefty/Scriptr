@@ -1,4 +1,4 @@
-define(["./Employee.js"], function(require,exports,Employee) {
+define(['exports', "./Employee.js"], function(exports, Employee) {
     
     function Company(name) {
         this.name = name;

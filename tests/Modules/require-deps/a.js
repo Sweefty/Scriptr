@@ -1,5 +1,5 @@
-define(function(require, exports){
+define(function(){
     GLOBAL_COUNTER++;
-    exports.name = 'a.js';
-    exports.counter = GLOBAL_COUNTER;
+    this.exports.name = 'a.js';
+    this.exports.counter = GLOBAL_COUNTER;
 });

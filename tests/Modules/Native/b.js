@@ -1,3 +1,3 @@
-define(['c'], function(require,exports, a){
-    exports.name = 'b.js';
+define(['c'], function(a){
+    this.exports.name = 'b.js';
 });

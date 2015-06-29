@@ -1,6 +1,6 @@
 define([
     './a.js'
-],function(require,exports,a){
-    exports.file = 'deps/d.js';
-    exports._from_a = a.file;
+],function(a){
+    this.exports.file = 'deps/d.js';
+    this.exports._from_a = a.file;
 });

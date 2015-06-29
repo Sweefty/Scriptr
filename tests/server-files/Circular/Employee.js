@@ -1,7 +1,7 @@
-define(function(require, exports) {
+define(function() {
 
     var Company;
-    require("./Company.js", function( C ){
+    this.require("./Company.js", function( C ){
         // Delayed loading
         Company = C;
     });

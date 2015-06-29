@@ -54,7 +54,7 @@
         this.children = [];
     }
     
-    Module.prototype.require = function (path,cb) {
+    var __require = Module.prototype.require = function (path,cb) {
         return Module._load(path, cb, this);
     };
     
@@ -103,8 +103,38 @@
         
         if (isArray(args[0])) {
             requireList = args[0];
+        } else if (args[0] && typeof args[0] === 'string'){
+            requireList = [args[0]];
         }
-        
+
+        var hasExportsRequire = [];
+        var list = [];
+        for (var i = 0; i < requireList.length; i++){
+            if (requireList[i] === 'require' || requireList[i] === 'exports'){
+                hasExportsRequire[i] = requireList[i];
+            } else {
+                list.push(requireList[i]);
+            }
+        }
+
+        if (hasExportsRequire.length){
+            requireList = list;
+            var _cb = cb;
+            cb = function(){
+                var self = this;
+                var args = [];
+                Array.prototype.push.apply( args, arguments );
+                for (var i =0; i < hasExportsRequire.length; i++){
+                    var name = hasExportsRequire[i];
+                    if (name){
+                        if ( args[i]){ args[i+1] = args[i]; }
+                        args.splice(i, 1, self[name]);
+                    }
+                }
+                _cb.apply(this, args);
+            };
+        }
+
         definedObjects.push({
             cb   : cb,
             list : requireList
@@ -121,7 +151,7 @@
         this.filename = filename;
 
         var $require = function () {
-            return self.require.apply(self, arguments);
+            return __require.apply(self, arguments);
         };
         
         var el = doc.createElement('script');
@@ -135,6 +165,7 @@
             el.onload = el.onreadystatechange = null;
 
             var _run = function () {
+                self.require = $require;
                 var _fireNestedCb = function () {
                     var imports   = self.imports;
                     var importLen = imports.length;
@@ -188,9 +219,10 @@
                             Array.prototype.push.apply( e, arguments );
                             if (list.length) {
                                 var mid = list.shift();
+
                                 var cb = list.length ? nested : function () {
                                     Array.prototype.push.apply( e, arguments );
-                                    var args = [$require, self.exports].concat(e);
+                                    var args = [].concat(e);
                                     callback.apply(self, args);
                                     _fireNestedCb();
                                 };
@@ -200,7 +232,7 @@
                         nested();
                         return;
                     }
-                    callback.apply(self, [$require, self.exports]);
+                    callback.apply(self);
                 }
                 _fireNestedCb();
             };
@@ -213,14 +245,11 @@
         } else {
             el.src = filename;
         }
-
         head.insertBefore(el, head.lastChild);
     };
     
     Module._load = function (request, cb, parent) {
-
         if (!cb){ cb = function(){}; }
-        
         if (isArray(request)) {
             var e = [], nested = function () {
                 Array.prototype.push.apply( e, arguments );
